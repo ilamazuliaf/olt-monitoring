@@ -18,6 +18,53 @@ def test_parse_pon_and_ont_id():
     assert parse_pon_and_ont_id("2.5") == ("1", "1/1/2", "5")
     assert parse_pon_and_ont_id("1.2.5") == ("1", "1/1/2", "5")
     assert parse_pon_and_ont_id("1.1.2.5") == ("1", "1/2", "5")
+    # HSGQ 32-bit packed int 16777473 (0x01000101 -> slot 1, pon 1, ont 1)
+    assert parse_pon_and_ont_id("16777473") == ("1", "1/1/1", "1")
+    assert parse_pon_and_ont_id("16777729") == ("1", "1/1/2", "1")
+
+
+def test_parse_hsgq_ont_table():
+    # Test HSGQ OLT private MIB data structure
+    status_walk = {
+        "1.3.6.1.4.1.50224.3.3.2.1.8.16777473": "INTEGER: 1",
+        "1.3.6.1.4.1.50224.3.3.2.1.8.16777474": "INTEGER: 1",
+        "1.3.6.1.4.1.50224.3.3.2.1.8.16777510": "INTEGER: 2",  # Offline
+    }
+    name_walk = {
+        "1.3.6.1.4.1.50224.3.3.2.1.2.16777473": 'STRING: "SUBAIDI"',
+        "1.3.6.1.4.1.50224.3.3.2.1.2.16777474": 'STRING: "TOLAK"',
+        "1.3.6.1.4.1.50224.3.3.2.1.2.16777510": 'STRING: "AMIR"',
+    }
+    rx_walk = {
+        "1.3.6.1.4.1.50224.3.3.3.1.4.16777473.0.0": "INTEGER: -2455",
+        "1.3.6.1.4.1.50224.3.3.3.1.4.16777474.0.0": "INTEGER: -2958",
+    }
+
+    onts = parse_ont_table(
+        status_walk=status_walk,
+        status_root_oid="1.3.6.1.4.1.50224.3.3.2.1.8",
+        online_vals=["1"],
+        offline_vals=["2"],
+        olt_name="HSGQ-OLT",
+        name_walk=name_walk,
+        name_root_oid="1.3.6.1.4.1.50224.3.3.2.1.2",
+        rx_walk=rx_walk,
+        rx_root_oid="1.3.6.1.4.1.50224.3.3.3.1.4",
+        rx_scale=100.0
+    )
+
+    assert len(onts) == 3
+    assert onts[0].ont_id == "1"
+    assert onts[0].name == "SUBAIDI"
+    assert onts[0].rx_power == -24.55
+
+    assert onts[1].ont_id == "2"
+    assert onts[1].name == "TOLAK"
+    assert onts[1].rx_power == -29.58
+
+    assert onts[2].status == "offline"
+    assert onts[2].name == "AMIR"
+    assert onts[2].rx_power is None
 
 
 def test_parse_optical_power():
