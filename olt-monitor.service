@@ -1,0 +1,21 @@
+[Unit]
+Description=OLT Telegram Monitor Service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=oltmonitor
+WorkingDirectory=/opt/olt-monitor
+EnvironmentFile=/opt/olt-monitor/.env
+ExecStart=/opt/olt-monitor/venv/bin/python -m app.main
+Restart=always
+RestartSec=5
+
+# Logging limits and security hardening
+StandardOutput=journal
+StandardError=journal
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target
