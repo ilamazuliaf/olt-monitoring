@@ -150,16 +150,18 @@ SNMP_TIMEOUT=5
 SNMP_RETRIES=2
 
 OLT_RX_POWER_THRESHOLD=-25
-OLT_RX_POWER_SCALE=10
+OLT_RX_POWER_SCALE=100
 
-OID_ONT_STATUS=1.3.6.1.4.1.3902.1012.3.28.1.1.3
-OID_ONT_RX_POWER=1.3.6.1.4.1.3902.1012.3.50.11.2.1.1
-OID_ONT_TX_POWER=1.3.6.1.4.1.3902.1012.3.50.11.2.1.2
-OID_ONT_SERIAL=1.3.6.1.4.1.3902.1012.3.28.1.1.5
-OID_ONT_NAME=1.3.6.1.4.1.3902.1012.3.28.1.1.2
+# Konfigurasi OID HSGQ Private MIB (50224)
+OID_ONT_STATUS=1.3.6.1.4.1.50224.3.3.2.1.8
+OID_ONT_RX_POWER=1.3.6.1.4.1.50224.3.3.3.1.4
+OID_ONT_TX_POWER=1.3.6.1.4.1.50224.3.3.3.1.5
+OID_ONT_VENDOR=1.3.6.1.4.1.50224.3.3.2.1.25
+OID_ONT_MODEL=1.3.6.1.4.1.50224.3.3.2.1.26
+OID_ONT_NAME=1.3.6.1.4.1.50224.3.3.2.1.2
 
-ONT_STATUS_ONLINE_VALUES=1,up,working
-ONT_STATUS_OFFLINE_VALUES=2,3,4,down,off,los
+ONT_STATUS_ONLINE_VALUES=1
+ONT_STATUS_OFFLINE_VALUES=2
 
 LOG_LEVEL=INFO
 LOG_FILE=logs/app.log
@@ -304,15 +306,23 @@ Untuk mengubah batas redaman buruk (misalnya dari `-25 dBm` menjadi `-27 dBm`):
 
 ---
 
-## 19. Cara Mengubah OID Vendor OLT
+## 19. Cara Mengubah OID Vendor & Model OLT
 
-Jika OLT Anda diganti dari ZTE ke Huawei / Fiberhome / VSOL:
+Aplikasi mendukung pengembalian informasi **Model** (kombinasi `Vendor + Model`, contoh: `ZTE F6639127`) ataupun **Serial Number** pada pesan Telegram (`/cek_putus` & `/cek_redaman`).
 
+Jika menggunakan OLT HSGQ (Private MIB `50224`):
+```env
+OID_ONT_VENDOR=1.3.6.1.4.1.50224.3.3.2.1.25
+OID_ONT_MODEL=1.3.6.1.4.1.50224.3.3.2.1.26
+```
+
+Jika OLT Anda menggunakan OID MIB berbeda (ZTE, Huawei, Fiberhome, dll):
 1. Buka file `.env`.
 2. Ganti nilai OID sesuai MIB vendor baru:
    ```env
    OID_ONT_STATUS=1.3.6.1.4.1.2011.6.128.1.1.2.46.1.15
    OID_ONT_RX_POWER=1.3.6.1.4.1.2011.6.128.1.1.2.51.1.4
+   OID_ONT_SERIAL=1.3.6.1.4.1.2011.6.128.1.1.2.43.1.3
    ```
 3. Restart service:
    ```bash

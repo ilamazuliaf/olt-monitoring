@@ -123,12 +123,12 @@ def format_offline_onts_message(ont_list: List[ONT], olt_name: str) -> List[str]
     for pon, items in grouped.items():
         block_lines = [f"<b>PON {html.escape(pon)}</b>"]
         for idx, ont in enumerate(items, 1):
-            sn = html.escape(ont.serial_number or "-")
+            model_info = html.escape(ont.display_model)
             name_info = f"\n  Nama: {html.escape(ont.name)}" if ont.name and ont.name != "-" else ""
             block_lines.append(
                 f"• <b>ONT {html.escape(str(ont.ont_id))}</b>{name_info}\n"
                 f"  Status: OFFLINE\n"
-                f"  SN: {sn}"
+                f"  Model: {model_info}"
             )
         blocks.append("\n".join(block_lines))
 
@@ -162,13 +162,13 @@ def format_high_attenuation_message(ont_list: List[ONT], olt_name: str, threshol
     for pon, items in grouped.items():
         block_lines = [f"<b>PON {html.escape(pon)}</b>"]
         for ont in items:
-            sn = html.escape(ont.serial_number or "-")
+            model_info = html.escape(ont.display_model)
             rx_str = f"{ont.rx_power:.2f}" if ont.rx_power is not None else "-"
             status_str = ont.status.upper()
             name_info = f"\n  Nama: {html.escape(ont.name)}" if ont.name and ont.name != "-" else ""
             block_lines.append(
                 f"• <b>ONT {html.escape(str(ont.ont_id))}</b>{name_info}\n"
-                f"  SN: {sn}\n"
+                f"  Model: {model_info}\n"
                 f"  RX Power: {rx_str} dBm\n"
                 f"  Status: {status_str}"
             )

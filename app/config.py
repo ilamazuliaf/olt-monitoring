@@ -49,6 +49,8 @@ class Config:
     oid_ont_rx_power: str = ""
     oid_ont_tx_power: str = ""
     oid_ont_serial: str = ""
+    oid_ont_vendor: str = ""
+    oid_ont_model: str = ""
     oid_ont_name: str = ""
 
     ont_status_online_values: List[str] = field(default_factory=lambda: ["1"])
@@ -110,6 +112,8 @@ class Config:
         oid_ont_rx_power = os.getenv("OID_ONT_RX_POWER", "").strip()
         oid_ont_tx_power = os.getenv("OID_ONT_TX_POWER", "").strip()
         oid_ont_serial = os.getenv("OID_ONT_SERIAL", "").strip()
+        oid_ont_vendor = os.getenv("OID_ONT_VENDOR", "").strip()
+        oid_ont_model = os.getenv("OID_ONT_MODEL", "").strip()
         oid_ont_name = os.getenv("OID_ONT_NAME", "").strip()
 
         online_raw = os.getenv("ONT_STATUS_ONLINE_VALUES", "1")
@@ -137,6 +141,8 @@ class Config:
             oid_ont_rx_power=oid_ont_rx_power,
             oid_ont_tx_power=oid_ont_tx_power,
             oid_ont_serial=oid_ont_serial,
+            oid_ont_vendor=oid_ont_vendor,
+            oid_ont_model=oid_ont_model,
             oid_ont_name=oid_ont_name,
             ont_status_online_values=ont_status_online_values,
             ont_status_offline_values=ont_status_offline_values,

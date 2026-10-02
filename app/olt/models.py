@@ -22,10 +22,24 @@ class ONT:
     pon: str = ""
     ont_id: str = ""
     serial_number: str = ""
+    vendor: str = ""
+    model: str = ""
     name: str = ""
     status: str = "offline"  # "online" or "offline"
     rx_power: Optional[float] = None
     tx_power: Optional[float] = None
+
+    @property
+    def display_model(self) -> str:
+        v = (self.vendor or "").strip()
+        m = (self.model or "").strip()
+        if v and m:
+            return f"{v} {m}"
+        if v:
+            return v
+        if m:
+            return m
+        return self.serial_number or "-"
 
     @property
     def is_online(self) -> bool:

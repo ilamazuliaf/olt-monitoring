@@ -137,6 +137,10 @@ def parse_ont_table(
     olt_name: str = "OLT-UTAMA",
     serial_walk: Optional[Dict[str, str]] = None,
     serial_root_oid: str = "",
+    vendor_walk: Optional[Dict[str, str]] = None,
+    vendor_root_oid: str = "",
+    model_walk: Optional[Dict[str, str]] = None,
+    model_root_oid: str = "",
     name_walk: Optional[Dict[str, str]] = None,
     name_root_oid: str = "",
     rx_walk: Optional[Dict[str, str]] = None,
@@ -192,7 +196,29 @@ def parse_ont_table(
                     raw_str = re.sub(r'^(Hex-STRING:|STRING:)\s*', '', raw_str).strip('" ')
                 target_ont.serial_number = raw_str or "-"
 
-    # 3. Parse ONT Names
+    # 3. Parse Vendors
+    if vendor_walk and vendor_root_oid:
+        for full_oid, raw_val in vendor_walk.items():
+            suffix = extract_oid_suffix(full_oid, vendor_root_oid)
+            target_ont = get_ont_for_suffix(suffix)
+            if target_ont:
+                raw_str = str(raw_val).strip()
+                if raw_str.startswith("Hex-STRING:") or raw_str.startswith("STRING:"):
+                    raw_str = re.sub(r'^(Hex-STRING:|STRING:)\s*', '', raw_str).strip('" ')
+                target_ont.vendor = raw_str or ""
+
+    # 4. Parse Models
+    if model_walk and model_root_oid:
+        for full_oid, raw_val in model_walk.items():
+            suffix = extract_oid_suffix(full_oid, model_root_oid)
+            target_ont = get_ont_for_suffix(suffix)
+            if target_ont:
+                raw_str = str(raw_val).strip()
+                if raw_str.startswith("Hex-STRING:") or raw_str.startswith("STRING:"):
+                    raw_str = re.sub(r'^(Hex-STRING:|STRING:)\s*', '', raw_str).strip('" ')
+                target_ont.model = raw_str or ""
+
+    # 5. Parse ONT Names
     if name_walk and name_root_oid:
         for full_oid, raw_val in name_walk.items():
             suffix = extract_oid_suffix(full_oid, name_root_oid)
@@ -203,7 +229,7 @@ def parse_ont_table(
                     raw_str = re.sub(r'^STRING:\s*', '', raw_str).strip('" ')
                 target_ont.name = raw_str or "-"
 
-    # 4. Parse RX Power
+    # 6. Parse RX Power
     if rx_walk and rx_root_oid:
         for full_oid, raw_val in rx_walk.items():
             suffix = extract_oid_suffix(full_oid, rx_root_oid)
@@ -211,7 +237,7 @@ def parse_ont_table(
             if target_ont:
                 target_ont.rx_power = parse_optical_power(raw_val, rx_scale)
 
-    # 5. Parse TX Power
+    # 7. Parse TX Power
     if tx_walk and tx_root_oid:
         for full_oid, raw_val in tx_walk.items():
             suffix = extract_oid_suffix(full_oid, tx_root_oid)

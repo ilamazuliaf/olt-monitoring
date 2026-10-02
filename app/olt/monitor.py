@@ -36,6 +36,14 @@ class OLTMonitor:
         if self.config.oid_ont_serial:
             serial_walk = await self.snmp_client.walk(self.config.oid_ont_serial)
 
+        vendor_walk = {}
+        if self.config.oid_ont_vendor:
+            vendor_walk = await self.snmp_client.walk(self.config.oid_ont_vendor)
+
+        model_walk = {}
+        if self.config.oid_ont_model:
+            model_walk = await self.snmp_client.walk(self.config.oid_ont_model)
+
         name_walk = {}
         if self.config.oid_ont_name:
             name_walk = await self.snmp_client.walk(self.config.oid_ont_name)
@@ -56,6 +64,10 @@ class OLTMonitor:
             olt_name=self.config.olt_name,
             serial_walk=serial_walk,
             serial_root_oid=self.config.oid_ont_serial,
+            vendor_walk=vendor_walk,
+            vendor_root_oid=self.config.oid_ont_vendor,
+            model_walk=model_walk,
+            model_root_oid=self.config.oid_ont_model,
             name_walk=name_walk,
             name_root_oid=self.config.oid_ont_name,
             rx_walk=rx_walk,
